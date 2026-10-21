@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "configuration": {
+    "mode": "2D",
+    "energy": 13.3,
+    "engine": "ray tracing",
+    "wave_points": 1024,
+    "wave_window": 2.0,
+    "spatial_kind": "gaussian",
+    "size_x": 13.3,
+    "size_y": 10.4,
+    "spatial_bound": 100.0,
+    "divergence_kind": "gaussian",
+    "div_x": 4.5,
+    "div_y": 5.3,
+    "div_bound": 100.0,
+    "source_z": 1.25,
+    "ray_count": 500000,
+    "seed": 1001,
+    "detector_z": 51.8,
+    "bins_x": 300,
+    "bins_y": 300,
+    "detectors": [
+      {
+        "location": 51.8,
+        "bins_x": 300,
+        "bins_y": 300
+      },
+      {
+        "location": 54.0,
+        "bins_x": 300,
+        "bins_y": 300
+      }
+    ],
+    "stacks": [
+      {
+        "location": 33.0,
+        "material": "diamond",
+        "shape": "parabolic",
+        "count": 4.0,
+        "radius": 0.5,
+        "aperture": 1.0,
+        "apex": 0.03,
+        "pitch": 2.5,
+        "axis": "2D",
+        "enabled": true
+      },
+      {
+        "location": 51.1,
+        "material": "diamond",
+        "shape": "parabolic",
+        "count": 16.0,
+        "radius": 0.1,
+        "aperture": 0.6,
+        "apex": 0.03,
+        "pitch": 2.5,
+        "axis": "2D",
+        "enabled": true
+      }
+    ],
+    "apertures": [],
+    "optics": [
+      {
+        "type": "stack",
+        "location": 33.0,
+        "material": "diamond",
+        "shape": "parabolic",
+        "count": 4.0,
+        "radius": 0.5,
+        "aperture": 1.0,
+        "apex": 0.03,
+        "pitch": 2.5,
+        "axis": "2D",
+        "enabled": true
+      },
+      {
+        "type": "stack",
+        "location": 51.1,
+        "material": "diamond",
+        "shape": "parabolic",
+        "count": 16.0,
+        "radius": 0.1,
+        "aperture": 0.6,
+        "apex": 0.03,
+        "pitch": 2.5,
+        "axis": "2D",
+        "enabled": true
+      }
+    ]
+  }
+}
