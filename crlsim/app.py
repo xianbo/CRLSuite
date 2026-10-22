@@ -5,7 +5,7 @@ from dataclasses import fields, is_dataclass
 from functools import partial
 from pathlib import Path
 from tkinter import filedialog, ttk
-from typing import Any, Optional
+from typing import Any
 
 import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -62,7 +62,7 @@ class CRLSuiteApp(tk.Tk):
         self.selected_detector = 0
         self.multi_running = False
         self._calculation_executor = ThreadPoolExecutor(max_workers=1)
-        self._calculation_future: Optional[Future[list[Any]]] = None
+        self._calculation_future: Future[list[Any]] | None = None
         self._calculation_job_id = 0
         self.vars = {}
         self.input_widgets = {}
@@ -1383,8 +1383,12 @@ class CRLSuiteApp(tk.Tk):
             size=spatial_size,
             divergence=divergence,
             angular_size=angular_size,
-            spatial_bounds=np.tile((-spatial_limit, spatial_limit), (dimension, 1)),
-            angular_bounds=np.tile((-angular_limit, angular_limit), (dimension, 1)),
+            spatial_bounds=np.tile(
+                (-spatial_limit, spatial_limit), (dimension, 1)
+            ).tolist(),
+            angular_bounds=np.tile(
+                (-angular_limit, angular_limit), (dimension, 1)
+            ).tolist(),
         )
         stacks = []
         for item in data["stacks"]:
@@ -1580,6 +1584,7 @@ class CRLSuiteApp(tk.Tk):
                 for position, weight in zip(
                     boundary_result.trajectory.position,
                     boundary_result.trajectory.weight,
+                    strict=False,
                 ):
                     surviving = weight[start:stop] > 0
                     values = position[start:stop, axis_index][surviving]
@@ -2075,7 +2080,7 @@ class CRLSuiteApp(tk.Tk):
         upper = np.asarray(
             farthest.metadata[f"boundary_upper_{axis_name}"], dtype=float
         )
-        points = list(zip(z.tolist(), lower.tolist(), upper.tolist()))
+        points = list(zip(z.tolist(), lower.tolist(), upper.tolist(), strict=False))
         for result in results:
             detector_z = float(result.detector_z)
             result_z = np.asarray(result.metadata["boundary_z"], dtype=float)
@@ -2099,7 +2104,7 @@ class CRLSuiteApp(tk.Tk):
             points = [point for point in points if not np.isclose(point[0], source_z)]
             points.append((source_z, 0.0, 0.0))
         points.sort(key=lambda point: point[0])
-        merged = tuple(np.asarray(values) for values in zip(*points))
+        merged = tuple(np.asarray(values) for values in zip(*points, strict=False))
         return merged[0], merged[1] * 1e6, merged[2] * 1e6
 
     @staticmethod
@@ -2111,7 +2116,9 @@ class CRLSuiteApp(tk.Tk):
         axis_name,
         data,
     ):
-        points = list(zip(boundary_z.tolist(), lower.tolist(), upper.tolist()))
+        points = list(
+            zip(boundary_z.tolist(), lower.tolist(), upper.tolist(), strict=False)
+        )
         active_positions = sorted(
             [item["location"] for item in data["stacks"] if item["enabled"]]
             + [item["location"] for item in data["apertures"] if item["enabled"]]
@@ -2138,7 +2145,7 @@ class CRLSuiteApp(tk.Tk):
                 continue
             points.append((focus_z, 0.0, 0.0))
         points.sort(key=lambda point: point[0])
-        return tuple(np.asarray(values) for values in zip(*points))
+        return tuple(np.asarray(values) for values in zip(*points, strict=False))
 
     @staticmethod
     def _schematic_label_positions(items, zmin, zmax):

@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import Optional
 
 import numpy as np
 
@@ -11,7 +10,7 @@ class RayBundle:
     position: np.ndarray
     angle: np.ndarray
     weight: np.ndarray
-    alive: Optional[np.ndarray] = None
+    alive: np.ndarray | None = None
 
     def __post_init__(self):
         self.position = np.asarray(self.position, dtype=float)
@@ -37,7 +36,7 @@ class RayBundle:
 
     @property
     def dimension(self) -> int:
-        return self.position.shape[1]
+        return int(self.position.shape[1])
 
     def copy(self):
         assert self.alive is not None
@@ -59,7 +58,7 @@ class LensStack:
     apex_thickness: float = 0.0
     pitch: float = 0.0
     shape: str = "parabolic"
-    axis: Optional[str] = None
+    axis: str | None = None
 
     def __post_init__(self):
         if not np.isfinite(self.z):
@@ -109,7 +108,7 @@ class LensStack:
 @dataclass(frozen=True)
 class Detector:
     z: float
-    aperture: Optional[float] = None
+    aperture: float | None = None
 
     def __post_init__(self):
         if not np.isfinite(self.z) or (
@@ -160,7 +159,7 @@ class SimulationResult:
     aperture_loss: float
     absorption_loss: float
     metadata: dict[str, object] = field(default_factory=dict)
-    profile: Optional[np.ndarray] = None
-    stats: Optional[dict[str, object]] = None
-    profile_coordinates: Optional[np.ndarray] = None
-    profile_extent: Optional[tuple[float, float, float, float]] = None
+    profile: np.ndarray | None = None
+    stats: dict[str, object] | None = None
+    profile_coordinates: np.ndarray | None = None
+    profile_extent: tuple[float, float, float, float] | None = None

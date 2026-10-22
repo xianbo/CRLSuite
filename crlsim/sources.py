@@ -1,13 +1,12 @@
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Optional, Union
 
 import numpy as np
 from scipy.special import ndtr
 
 from .models import RayBundle
 
-ArrayLike = Union[float, Sequence[float], np.ndarray]
+ArrayLike = float | Sequence[float] | np.ndarray
 
 
 def _vector(
@@ -35,8 +34,8 @@ class Source:
     angular_size: ArrayLike = 0.0
     center: ArrayLike = 0.0
     mean_angle: ArrayLike = 0.0
-    spatial_bounds: Optional[Sequence[Sequence[float]]] = None
-    angular_bounds: Optional[Sequence[Sequence[float]]] = None
+    spatial_bounds: Sequence[Sequence[float]] | None = None
+    angular_bounds: Sequence[Sequence[float]] | None = None
 
     def __post_init__(self):
         if self.dimension not in (1, 2) or not np.isfinite(self.z):
@@ -113,7 +112,7 @@ class Source:
                     raise RuntimeError("bounded source sampling did not converge")
         return values
 
-    def sample(self, count: int, seed: Optional[int] = None) -> RayBundle:
+    def sample(self, count: int, seed: int | None = None) -> RayBundle:
         if not isinstance(count, int) or count < 1:
             raise ValueError("count must be a positive integer")
         rng = np.random.default_rng(seed)

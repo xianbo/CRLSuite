@@ -1,6 +1,5 @@
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Union
 
 import numpy as np
 
@@ -26,11 +25,11 @@ class Simulator:
 
     def run(
         self,
-        source: Union[Source, RayBundle],
+        source: Source | RayBundle,
         stacks: Sequence[LensStack],
         detector: Detector,
         rays: int = 100000,
-        seed: Union[int, None] = None,
+        seed: int | None = None,
         source_plane: float = 0.0,
         apertures: Sequence[Aperture] = (),
     ) -> SimulationResult:
@@ -156,7 +155,9 @@ class Simulator:
     def _envelope(trajectory):
         centroid = []
         sigma = []
-        for position, weight in zip(trajectory.position, trajectory.weight):
+        for position, weight in zip(
+            trajectory.position, trajectory.weight, strict=False
+        ):
             total = np.sum(weight)
             if total <= 0:
                 centroid.append(np.full(position.shape[1], np.nan))

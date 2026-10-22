@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Any, Union
+from typing import Any
 
 import h5py
 import numpy as np
@@ -41,8 +41,8 @@ def _write_mapping(group: h5py.Group, values: dict[str, Any]) -> None:
 
 
 def _write_result(
-    group: Union[h5py.File, h5py.Group],
-    result: Union[SimulationResult, WavefrontResult],
+    group: h5py.File | h5py.Group,
+    result: SimulationResult | WavefrontResult,
     profile_name: str,
 ) -> None:
     if isinstance(result, SimulationResult):
@@ -67,7 +67,7 @@ def _write_result(
 def save_hdf5(
     path: Path,
     configuration: dict[str, Any],
-    result: Union[SimulationResult, WavefrontResult],
+    result: SimulationResult | WavefrontResult,
 ) -> None:
     with h5py.File(path, "w") as handle:
         handle.attrs["format"] = "CRLSuite results"
@@ -80,7 +80,7 @@ def save_hdf5(
 def save_hdf5_multiple(
     path: Path,
     configuration: dict[str, Any],
-    results: list[Union[SimulationResult, WavefrontResult]],
+    results: list[SimulationResult | WavefrontResult],
 ) -> None:
     with h5py.File(path, "w") as handle:
         handle.attrs["format"] = "CRLSuite multi-detector results"

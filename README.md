@@ -1,6 +1,6 @@
 # CRLSuite
 
-CRLSuite is a Python 3.9 desktop application for forward simulation of
+CRLSuite is a Python 3.13 desktop application for forward simulation of
 compound refractive X-ray lenses, apertures, and multiple detector planes.
 
 ## Features
@@ -24,7 +24,7 @@ converted at that boundary rather than treated as SI density values.
 
 ## Installation
 
-Install Python 3.9 or newer, extract the ZIP, open a terminal in the extracted
+Install Python 3.13 or newer, extract the ZIP, open a terminal in the extracted
 `CRLSuite` folder, then run:
 
 ```bash

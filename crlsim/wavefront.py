@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import Optional, Union
 
 import numpy as np
 from scipy.signal import fftconvolve
@@ -19,13 +18,13 @@ from .sources import Source
 class WavefrontResult:
     profile: np.ndarray
     coordinates_x: np.ndarray
-    coordinates_y: Optional[np.ndarray]
+    coordinates_y: np.ndarray | None
     detector_z: float
     stats: dict[str, object]
     transmission: float
     metadata: dict[str, object] = field(default_factory=dict)
-    profile_coordinates: Optional[np.ndarray] = None
-    profile_extent: Optional[tuple[float, float, float, float]] = None
+    profile_coordinates: np.ndarray | None = None
+    profile_extent: tuple[float, float, float, float] | None = None
 
 
 def _axis(size: float, points: int) -> np.ndarray:
@@ -37,7 +36,7 @@ def _point_source_field(
     points: int,
     spacing: float,
     wavelength: float,
-    source_offset: Optional[np.ndarray] = None,
+    source_offset: np.ndarray | None = None,
 ) -> np.ndarray:
     angular_size = np.broadcast_to(
         np.asarray(source.angular_size, dtype=float), source.dimension
@@ -292,10 +291,10 @@ def _phase_gradient(field: np.ndarray, spacing: float, axis: int) -> np.ndarray:
     forward = np.roll(field, -1, axis=axis)
     backward = np.roll(field, 1, axis=axis)
     gradient = np.angle(forward * np.conj(backward)) / (2.0 * spacing)
-    first: list[Union[slice, int]] = [slice(None)] * field.ndim
-    second: list[Union[slice, int]] = [slice(None)] * field.ndim
-    last: list[Union[slice, int]] = [slice(None)] * field.ndim
-    previous: list[Union[slice, int]] = [slice(None)] * field.ndim
+    first: list[slice | int] = [slice(None)] * field.ndim
+    second: list[slice | int] = [slice(None)] * field.ndim
+    last: list[slice | int] = [slice(None)] * field.ndim
+    previous: list[slice | int] = [slice(None)] * field.ndim
     first[axis], second[axis] = 0, 1
     last[axis], previous[axis] = -1, -2
     gradient[tuple(first)] = (
@@ -373,7 +372,7 @@ def _detector_transfer(axes: tuple[np.ndarray, ...], detector: Detector) -> np.n
     if detector.aperture is None:
         return np.ones(tuple(len(axis) for axis in axes[::-1]), dtype=bool)
     if len(axes) == 1:
-        return np.abs(axes[0]) <= detector.aperture * 0.5
+        return np.asarray(np.abs(axes[0]) <= detector.aperture * 0.5, dtype=bool)
     x, y = np.meshgrid(*axes, indexing="xy")
     return np.array(x**2 + y**2 <= (detector.aperture * 0.5) ** 2, dtype=bool)
 
@@ -382,7 +381,8 @@ def _centered_convolve(intensity: np.ndarray, kernel: np.ndarray) -> np.ndarray:
     full = fftconvolve(intensity, kernel, mode="full")
     starts = tuple(size // 2 for size in kernel.shape)
     slices = tuple(
-        slice(start, start + size) for start, size in zip(starts, intensity.shape)
+        slice(start, start + size)
+        for start, size in zip(starts, intensity.shape, strict=False)
     )
     result: np.ndarray = np.asarray(full[slices])
     return result
@@ -435,7 +435,7 @@ def simulate_wavefront(
     energy_keV: float,
     points: int = 512,
     window_m: float = 2e-3,
-    source_offset: Optional[np.ndarray] = None,
+    source_offset: np.ndarray | None = None,
     apply_source_convolution: bool = True,
 ) -> WavefrontResult:
     if points < 32 or points & (points - 1):

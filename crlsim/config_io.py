@@ -1,6 +1,6 @@
 import json
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -84,7 +84,7 @@ def append_history(
     entries.insert(
         0,
         {
-            "timestamp": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "timestamp": datetime.now(UTC).isoformat(timespec="seconds"),
             "configuration": configuration,
         },
     )

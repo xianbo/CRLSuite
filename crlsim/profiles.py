@@ -1,5 +1,3 @@
-from typing import Optional
-
 import numpy as np
 from scipy.optimize import curve_fit
 
@@ -141,9 +139,9 @@ def gaussian_fit_fwhm(coordinates, values):
 
 def statistics(
     values: np.ndarray,
-    weights: Optional[np.ndarray] = None,
+    weights: np.ndarray | None = None,
     bins: int = 100,
-    initial_weight: Optional[float] = None,
+    initial_weight: float | None = None,
     aperture_loss: float = 0.0,
     absorption_loss: float = 0.0,
 ) -> dict[str, object]:
@@ -169,8 +167,8 @@ def statistics(
 
 def statistics2d(
     position: np.ndarray,
-    weights: Optional[np.ndarray] = None,
-    initial_weight: Optional[float] = None,
+    weights: np.ndarray | None = None,
+    initial_weight: float | None = None,
     aperture_loss: float = 0.0,
     absorption_loss: float = 0.0,
     encircled: tuple[float, ...] = (0.5, 0.8, 0.9),
